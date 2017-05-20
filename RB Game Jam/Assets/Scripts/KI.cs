@@ -40,7 +40,7 @@ public class KI : MonoBehaviour
     public void SetCurrentPlanet(GameObject planet)
     {
         currentPlanet = planet;
-        planet.GetComponent<Planet>().ownedByPlayer = this;
+//        planet.GetComponent<Planet>().ownedByPlayer = this;
         planet.GetComponent<MeshRenderer>().material = material;
 
         ap--;
