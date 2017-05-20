@@ -4,42 +4,25 @@ using UnityEngine;
 
 public class CameraRotation : MonoBehaviour {
 
-	[SerializeField]
-	private Vector3 drag;
-	private Vector3 startDrag;
+    public Transform sphere;
+    public float speed = 0.001f;
 
-	private bool isPressed;
+    private Transform center;
 
-	public float rotationSpeed = 10f;
-	public float smoothRotation = 3f;
+    void Start() {
+        center = new GameObject().transform;
+        center.parent = sphere;
+        center.position = Vector3.zero;
+        transform.parent = center; }
 
-	private Quaternion currentRotation;
+    void  Update()
+    { // if the sphere moves, uncomment the following line // center.position = sphere.position;
+        float X = -Input.GetAxis("mouseVert") ;
+        float Y = Input.GetAxis("mouseHor") ;
+        if (Input.GetMouseButton(0))
 
-	void Start () {
-	}
+            center.Rotate(X , Y, 0.0f);
 
-	void Update () {
-		if (Input.GetMouseButtonDown (2)) {
-			isPressed = true;
-		}
-		if (Input.GetMouseButtonUp (2)) {
-			isPressed = false;
-		}
-
-		if (isPressed) {
-			drag = Input.mousePosition - startDrag;
-			startDrag = Input.mousePosition;
-		} else {
-			drag = Vector3.zero;
-		}
-
-		currentRotation = Quaternion.Euler (transform.rotation.eulerAngles.x + drag.y * Time.deltaTime * rotationSpeed, transform.rotation.eulerAngles.y + drag.x * Time.deltaTime * rotationSpeed, transform.rotation.eulerAngles.z);
-
-		transform.rotation = Quaternion.Lerp (transform.rotation, currentRotation, 3f * Time.deltaTime);
-	}
-
-	void OnDrawGizmos(){
-		Gizmos.color = Color.green;
-		Gizmos.DrawLine (transform.position, transform.position + transform.forward);
-	}
+        Debug.Log("X: " + X + "\t Y: " + Y);
+    }
 }
