@@ -6,6 +6,8 @@ public class Planet : MonoBehaviour {
 
 	public Vector3 coordinates;
 
+	public Texture t1, t2, t3, t4, t5;
+
 	void Start () {
 		
 	}
@@ -18,5 +20,8 @@ public class Planet : MonoBehaviour {
 		coordinates = position;
 
 		transform.position = coordinates;
+	}
+
+	void AnimateTexture(){
 	}
 }
