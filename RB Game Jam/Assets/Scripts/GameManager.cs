@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour {
 
 	public void StartNextRound() {
 		currentRound++;
-		currentPlayerCount = 0;
+		currentPlayerCount = 1;
 
 		currentAP++;
 		if (currentAP > maxAP)
