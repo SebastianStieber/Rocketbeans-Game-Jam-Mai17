@@ -25,7 +25,7 @@ public class World : MonoBehaviour {
 	float oldRandomness = 1f;
 	float oldStreetDistanceMultiplier = 3f;
 
-	void Start () {
+	void OnEnable () {
 		GeneratePlanets ();
 		ApplyRandomness ();
 	}
