@@ -17,12 +17,6 @@ public class CameraRotation : MonoBehaviour {
 
     void  Update()
     { // if the sphere moves, uncomment the following line // center.position = sphere.position;
-        float X = -Input.GetAxis("mouseVert") ;
-        float Y = Input.GetAxis("mouseHor") ;
-        if (Input.GetMouseButton(0))
-
-            center.Rotate(X , Y, 0.0f);
-
-        Debug.Log("X: " + X + "\t Y: " + Y);
+        
     }
 }

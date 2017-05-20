@@ -4,61 +4,63 @@ using UnityEngine;
 
 public class OnClick : MonoBehaviour {
 
-    GameObject SelectedObject;
+	GameObject selectedPlanet;
+	GameManager gameManager;
 
-    // Use this for initialization
     void Start () {
-		
+		gameManager = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hitInfo;
 
-        if(Physics.Raycast(ray, out hitInfo) && Input.GetMouseButton(0))
+        if(Physics.Raycast(ray, out hitInfo) && Input.GetMouseButtonDown(0))
         {
-
-            GameObject hitObject = hitInfo.transform.root.gameObject;
+			if (hitInfo.collider.gameObject.tag == "Planet") {
+				GameObject hitObject = hitInfo.transform.gameObject;
 
             
-            SelectObject(hitObject);
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            ClearSelection();
+				SelectObject (hitObject);
+			} else {
+				ClearSelection();
+			}
         }
 	}
 
-    void SelectObject(GameObject obj)
-    {
-        if(SelectedObject != null)
-        {
-            if (obj == SelectedObject)
-                return;
-            ClearSelection();
-        }
-        SelectedObject = obj;
+	void SelectObject(GameObject planet) {
+		if (planet == selectedPlanet) {
+			if (planet.GetComponent<Planet> ().ownedByPlayer == gameManager.currentPlayer || !planet.GetComponent<Planet> ().ownedByPlayer) {
+				List<GameObject> planetNodes = GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ().currentPlanet.GetComponent<Planet> ().nodes;
+				if(planetNodes.Contains(planet))
+					gameManager.SelectPlanet (GameObject.FindGameObjectWithTag("Player").GetComponent<Player>(), selectedPlanet.GetComponent<Planet>());
+			}
+		} else {
+			if (selectedPlanet != null) {
+				if (planet == selectedPlanet)
+					return;
+				ClearSelection ();
+			}
+			selectedPlanet = planet;
 
-        Renderer r = SelectedObject.GetComponent<Renderer>();
-        Material m = r.material;
-        m.color = Color.green;
-        r.material = m;
+			Renderer r = selectedPlanet.GetComponent<Renderer> ();
+			Material m = r.material;
+			m.color = Color.green;
+			r.material = m;
+		}
     }
 
-    void ClearSelection()
-    {
-        if (SelectedObject == null)
-        {
+    void ClearSelection() {
+        if (selectedPlanet == null) {
             return;
         }
 
-        Renderer r = SelectedObject.GetComponent<Renderer>();
+        Renderer r = selectedPlanet.GetComponent<Renderer>();
         Material m = r.material;
         m.color = Color.white;
         r.material = m;
 
-        SelectedObject = null;
+        selectedPlanet = null;
     }
 }

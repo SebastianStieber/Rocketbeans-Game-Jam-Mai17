@@ -98,9 +98,10 @@ public class World : MonoBehaviour {
 	bool BuildStreet(GameObject planet){
 		int c = 0;
 		foreach (GameObject p2 in planets) {
-			if (Vector3.Distance (planet.GetComponent<Planet> ().coordinates, p2.GetComponent<Planet> ().coordinates) <= distanceBetweenPlanets * streetDistanceMultiplier) {
+			if (p2 != planet && Vector3.Distance (planet.GetComponent<Planet> ().coordinates, p2.GetComponent<Planet> ().coordinates) <= distanceBetweenPlanets * streetDistanceMultiplier) {
 				GameObject street = Instantiate (streetPrefab);
 				street.GetComponent<LineRenderer> ().SetPositions (new Vector3 [] {planet.transform.position, p2.transform.position});
+				planet.GetComponent<Planet> ().nodes.Add (p2);
 				c++;
 			}
 		}
