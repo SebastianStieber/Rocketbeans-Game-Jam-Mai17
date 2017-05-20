@@ -65,7 +65,7 @@ public class World : MonoBehaviour {
 		return false;
 	}
 
-	void ApplyRandomness (){
+	void ApplyRandomness () {
 		foreach (GameObject p in planets) {
 			Vector3 r = new Vector3 (Random.Range(-randomness, randomness),Random.Range(-randomness, randomness),Random.Range(-randomness, randomness));
 			p.transform.position = p.transform.position + r;
