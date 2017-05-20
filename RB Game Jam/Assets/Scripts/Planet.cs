@@ -8,6 +8,8 @@ public class Planet : MonoBehaviour {
 
 	public Texture t1, t2, t3, t4, t5;
 
+	public bool hasStreet;
+
 	void Start () {
 		
 	}
