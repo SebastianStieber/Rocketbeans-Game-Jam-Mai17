@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PostProcessing;
 
 public class CameraFollow : MonoBehaviour {
 
@@ -13,6 +14,8 @@ public class CameraFollow : MonoBehaviour {
 	private float currentZoom;
 	public float smoothZoom = 1.5f;
 
+	public float smoothMove = .5f;
+
     public float minDistance = 2f;
 	public float maxDistance = 4f;
 
@@ -21,15 +24,14 @@ public class CameraFollow : MonoBehaviour {
     void Start () {
 		gameCam = GameObject.FindGameObjectWithTag ("MainCamera");
 		currentZoom = 1f;
-		CenterOnTarget ();
 	}
 
 	void Update () {
 		target = GetComponent<Player> ().currentPlanet;
 		if (oldTarget != target || target == null)
-			CenterOnTarget ();
 		
 		Zoom ();
+		Move ();
     }
 
 	void CenterOnTarget(){
@@ -56,6 +58,14 @@ public class CameraFollow : MonoBehaviour {
 		float distanceToTarget = minDistance + (maxDistance - minDistance) * zoom;
 
 		gameCam.transform.localPosition = Vector3.zero + new Vector3 (0, 0, distanceToTarget);
-		gameCam.transform.LookAt (target.transform);
+
+	}
+
+	void Move(){
+		if (transform.position != target.transform.position) {
+			transform.position = Vector3.Lerp (transform.position, target.transform.position, smoothMove * Time.deltaTime);
+		}
+		Quaternion r = Quaternion.LookRotation (target.transform.position - gameCam.transform.position, Vector3.up);
+		gameCam.transform.rotation = Quaternion.Lerp (gameCam.transform.rotation, r, smoothMove * Time.deltaTime);
 	}
 }

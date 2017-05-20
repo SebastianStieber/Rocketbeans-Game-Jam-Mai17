@@ -7,18 +7,29 @@ public class Planet : MonoBehaviour {
 	public Vector3 coordinates;
 	public List<GameObject> nodes = new List<GameObject>();
 
-	public Texture t1, t2, t3, t4, t5;
+	public Material[] materials;
+	public int currentMaterialPosition = 0;
 
 	public bool hasStreet;
 
 	public Player ownedByPlayer;
 
+	public float cooldown = .5f;
+	float currentCooldown;
+
+	bool forward = true;
+
+	GameObject gameCam;
+
 	void Start () {
-		
+		currentCooldown = cooldown;
+
+		gameCam = GameObject.FindGameObjectWithTag ("MainCamera");
+		transform.localScale = transform.localScale * -1;
 	}
 
 	void Update () {
-		
+		AnimateTexture ();
 	}
 
 	public void SetCoordinates(Vector3 position){
@@ -28,5 +39,30 @@ public class Planet : MonoBehaviour {
 	}
 
 	void AnimateTexture(){
+		currentCooldown -= Time.deltaTime;
+
+		if (forward) {
+			if (currentCooldown <= 0) {
+				currentCooldown = cooldown;
+				currentMaterialPosition++;
+				if (currentMaterialPosition > materials.Length - 1) {
+					currentMaterialPosition = materials.Length - 2;
+					forward = false;
+				}
+			}
+		} else {
+			if (currentCooldown <= 0) {
+				currentCooldown = cooldown;
+				currentMaterialPosition--;
+				if (currentMaterialPosition < 0) {
+					currentMaterialPosition = 1;
+					forward = true;
+				}
+			}
+		}
+
+		GetComponent<MeshRenderer> ().material = materials [currentMaterialPosition];
+
+		transform.LookAt (gameCam.transform);
 	}
 }
