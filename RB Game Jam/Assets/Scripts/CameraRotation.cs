@@ -4,19 +4,29 @@ using UnityEngine;
 
 public class CameraRotation : MonoBehaviour {
 
-    public Transform sphere;
-    public float speed = 0.001f;
+	public Vector3 startDrag;
 
-    private Transform center;
+	public bool isPressed;
 
     void Start() {
-        center = new GameObject().transform;
-        center.parent = sphere;
-        center.position = Vector3.zero;
-        transform.parent = center; }
+	}
 
-    void  Update()
-    { // if the sphere moves, uncomment the following line // center.position = sphere.position;
-        
+    void  Update() {
+		Drag ();
     }
+
+	void Drag(){
+		if (Input.GetMouseButtonDown (1)) {
+			isPressed = true;
+
+			startDrag = Input.mousePosition;
+		} else if (Input.GetMouseButtonUp (1)) {
+			isPressed = false;
+		}
+
+		if (isPressed) {
+			Vector3 drag = Input.mousePosition - startDrag;
+			transform.rotation = transform.rotation * Quaternion.Euler (new Vector3(drag.y * Time.deltaTime / 2, drag.x * Time.deltaTime / 2, 0));
+		}
+	}
 }
