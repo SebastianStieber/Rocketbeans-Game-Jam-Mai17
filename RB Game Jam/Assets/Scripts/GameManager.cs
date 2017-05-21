@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour {
 		if (currentPlayer == allPlayers [1] && currentPlayer.ap <= 0) {
 			StartNextTurn ();
 		}
+
+		GameObject.FindGameObjectWithTag ("PlayerAPUI").GetComponent<AP> ().SetImages (currentPlayer);
 	}
 
 	private void CheckButton() {
@@ -87,6 +89,12 @@ public class GameManager : MonoBehaviour {
 			StartNextRound ();
 		} else {
 			currentPlayer = allPlayers [currentPlayerCount];
+		}
+
+		if (currentPlayerCount == 0) {
+			GameObject.FindGameObjectWithTag ("PlayerUI").GetComponent<Text> ().text = "DU SPIELST";
+		} else if (currentPlayerCount == 1) {
+			GameObject.FindGameObjectWithTag ("PlayerUI").GetComponent<Text> ().text = "CPU SPIELT";
 		}
 	}
 
