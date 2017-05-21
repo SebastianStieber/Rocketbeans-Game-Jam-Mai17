@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour {
 	public Player currentPlayer;
 	public int currentPlayerCount;
 
+    public bool gameOver=false;
+
 	public int maxAP = 5;
 	public int currentAP = 1;
 
@@ -80,21 +82,18 @@ public class GameManager : MonoBehaviour {
             {
                 if (currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i].GetComponent<Planet>().ownedByPlayer == null)
                 {
-                    referenz = currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i];break;
+                    referenz = currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i]; break;
                 }
-                if(currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i].GetComponent<Planet>().ownedByPlayer == currentPlayer)
+                if (currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i].GetComponent<Planet>().ownedByPlayer == currentPlayer)
                 {
-                    friendlyPlanets.Add(currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i].GetComponent<Planet>().nodes[i]);
+                    friendlyPlanets.Add(currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i]);
                 }
             }
-
             //Befreundeten Planeten finden und zufällig einen wählen
                 if (referenz == null)
             {
-                int planet = Random.Range(0, friendlyPlanets.Count-1); // liefert nur 0
-                Debug.Log("Max friendly Planets: " + friendlyPlanets.Count + "Planet: " + planet);
+                int planet = Random.Range(0, friendlyPlanets.Count); // liefert nur 0
                 referenz = friendlyPlanets[planet];
-                currentPlayer.ap--;
                 currentPlayer.AiSetCurrentPlanet(referenz);
             }
 
@@ -104,6 +103,7 @@ public class GameManager : MonoBehaviour {
                 currentPlayer.ap--;
                 currentPlayer.AiSetCurrentPlanet(referenz);
             }
+            friendlyPlanets.Clear();
         }
         //Zug vorbei
         StartNextTurn();
@@ -111,6 +111,10 @@ public class GameManager : MonoBehaviour {
 
 
 	public void SelectPlanet(Player player, Planet planet){
+        if(planet.GetComponent<Planet>().ownedByPlayer == player)
+        {
+            player.ap++;
+        }
 		player.SetCurrentPlanet (planet.gameObject);
 	}
 
@@ -128,6 +132,7 @@ public class GameManager : MonoBehaviour {
 
         if (playerPlanets+aiPlanets == world.planets.Count)
         {
+            gameOver = true;
             if(playerPlanets>aiPlanets)
             {
                 Debug.Log("Don Melone gewinnt der Kinderhandelskrieg mit " +playerPlanets+" Planeten!");
