@@ -85,9 +85,9 @@ public class GameManager : MonoBehaviour {
     {
         GameObject referenz = null;
         List<GameObject> friendlyPlanets = new List<GameObject>(); ;
+        int turnsNeeded = 0;
 
-
-        while (currentPlayer.ap > 0)
+        while (currentPlayer.ap > 0 && turnsNeeded < 1000)
         {
             //Loop ob Planet verfügbar ist
             for (int i = 0; i < currentPlayer.currentPlanet.GetComponent<Planet>().nodes.Count; i++)
@@ -102,20 +102,26 @@ public class GameManager : MonoBehaviour {
                 }
             }
             //Befreundeten Planeten finden und zufällig einen wählen
-                if (referenz == null)
+            if (referenz == null)
             {
-                int planet = Random.Range(0, friendlyPlanets.Count); // liefert nur 0
+                int planet = Random.Range(0, friendlyPlanets.Count); 
                 referenz = friendlyPlanets[planet];
                 currentPlayer.AiSetCurrentPlanet(referenz);
+                friendlyPlanets.Clear();
+                turnsNeeded++;
+                if(turnsNeeded>=1000)
+                {
+                    Debug.Log(turnsNeeded);
+                    currentPlayer.ap--;
+                    turnsNeeded = 0;
+                }
             }
-
             //fremder Planet wurde gefunden
-            else if (referenz != null)
+            else 
             {
                 currentPlayer.ap--;
                 currentPlayer.AiSetCurrentPlanet(referenz);
             }
-            friendlyPlanets.Clear();
         }
         //Zug vorbei
         StartNextTurn();
