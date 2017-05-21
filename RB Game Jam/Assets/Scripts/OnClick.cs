@@ -7,6 +7,8 @@ public class OnClick : MonoBehaviour {
 	GameObject selectedPlanet;
 	GameManager gameManager;
 
+	GameObject gameObjectHover;
+
     void Start () {
 		gameManager = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 	}
@@ -16,17 +18,32 @@ public class OnClick : MonoBehaviour {
 
         RaycastHit hitInfo;
 
-        if(Physics.Raycast(ray, out hitInfo) && Input.GetMouseButtonDown(0))
-        {
-			if (hitInfo.collider.gameObject.tag == "Planet") {
+		if(Physics.Raycast(ray, out hitInfo)){
+			if (hitInfo.collider.gameObject.tag == "Planet" && Input.GetMouseButtonDown(0)) {
 				GameObject hitObject = hitInfo.transform.gameObject;
-
-            
 				SelectObject (hitObject);
-			} else {
-				ClearSelection();
+			} 
+		} else {
+			ClearSelection();
+		}
+
+		Ray rayHover = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+		RaycastHit hoverHit;
+
+
+		if(Physics.Raycast(rayHover, out hoverHit)){
+			if (hoverHit.collider.gameObject.tag == "Planet") {
+				GameObject g = hoverHit.collider.gameObject;
+
+				g.transform.localScale = Vector3.Lerp(g.transform.localScale, Vector3.one * -1 * 14f, 3f * Time.deltaTime);
+
+				gameObjectHover = g;
 			}
-        }
+		} else if (gameObjectHover != null) {
+			gameObjectHover.transform.localScale = Vector3.one * -1 * 10f;
+			gameObjectHover = null;
+		}
 	}
 
 	void SelectObject(GameObject planet) {
@@ -43,11 +60,6 @@ public class OnClick : MonoBehaviour {
 				ClearSelection ();
 			}
 			selectedPlanet = planet;
-
-			Renderer r = selectedPlanet.GetComponent<Renderer> ();
-			Material m = r.material;
-			m.color = Color.green;
-			r.material = m;
 		}
     }
 
@@ -55,11 +67,6 @@ public class OnClick : MonoBehaviour {
         if (selectedPlanet == null) {
             return;
         }
-
-        Renderer r = selectedPlanet.GetComponent<Renderer>();
-        Material m = r.material;
-        m.color = Color.white;
-        r.material = m;
 
         selectedPlanet = null;
     }

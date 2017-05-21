@@ -12,13 +12,19 @@ public class World : MonoBehaviour {
 
 	public List<GameObject> planets = new List<GameObject>();
 
-	public GameObject planetPrefab;
+	public GameObject planetPrefab1;
+	public GameObject planetPrefab2;
+	public GameObject planetPrefab3;
 	public GameObject streetPrefab;
 
 	void OnEnable () {
 		GeneratePlanets ();
 		ApplyRandomness ();
 		BuildStreets ();
+
+		foreach (GameObject go in planets)
+			if (go.transform.position == Vector3.zero)
+				Destroy (go);
 	}
 
 	void Update () {
@@ -33,7 +39,16 @@ public class World : MonoBehaviour {
 	GameObject GeneratePlanet(){
 		Vector3 position = CalculatePosition ();
 
-		GameObject planet = Instantiate (planetPrefab);
+		int r = Random.Range (0, 2);
+
+		GameObject planet;
+		if (r == 0)
+			planet = Instantiate (planetPrefab1);
+		if (r == 1)
+			planet = Instantiate (planetPrefab2);
+		else
+			planet = Instantiate (planetPrefab3);
+
 		planet.GetComponent<Planet> ().SetCoordinates (position);
 
 		planets.Add (planet);
@@ -100,7 +115,10 @@ public class World : MonoBehaviour {
 		foreach (GameObject p2 in planets) {
 			if (p2 != planet && Vector3.Distance (planet.GetComponent<Planet> ().coordinates, p2.GetComponent<Planet> ().coordinates) <= distanceBetweenPlanets * streetDistanceMultiplier) {
 				GameObject street = Instantiate (streetPrefab);
-				street.GetComponent<LineRenderer> ().SetPositions (new Vector3 [] {planet.transform.position, p2.transform.position});
+				Vector3 dir = p2.transform.position - planet.transform.position;
+				dir.Normalize ();
+				float factor = 5;
+				street.GetComponent<LineRenderer> ().SetPositions (new Vector3 [] {planet.transform.position + dir * factor, p2.transform.position - dir * factor});
 				planet.GetComponent<Planet> ().nodes.Add (p2);
 				c++;
 			}

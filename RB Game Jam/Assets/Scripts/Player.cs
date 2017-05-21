@@ -17,13 +17,15 @@ public class Player : MonoBehaviour {
 
 	public Material material;
 
+	private World world;
+
 	void Start () {
 		gameManager = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager>();
+		world = GameObject.FindGameObjectWithTag ("World").GetComponent<World>();
 	}
 
 	void Update () {
 		if (transform.position != currentPlanet.transform.position) {
-			Debug.Log (33);
 			transform.position = Vector3.Lerp(transform.position, currentPlanet.transform.position, smooth * Time.deltaTime);
 		}
 	}
@@ -35,11 +37,18 @@ public class Player : MonoBehaviour {
 	public void SetCurrentPlanet(GameObject planet){
 		currentPlanet = planet;
 		planet.GetComponent<Planet> ().ownedByPlayer = this;
-		planet.GetComponent<MeshRenderer> ().material = material;
 
 		ap--;
-		if (ap == 0) {
-			gameManager.StartNextTurn ();
-		}
+		if (ap <= 0)
+			ap = 0;
+
+		world.GetComponent<Selector> ().UpdateSelectors ();
 	}
+
+    public void AiSetCurrentPlanet(GameObject planet)
+    {
+        currentPlanet = planet;
+		planet.GetComponent<Planet>().ownedByPlayer = this;
+		world.GetComponent<Selector> ().UpdateSelectors ();
+    }
 }
