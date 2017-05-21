@@ -10,30 +10,44 @@ public class GameManager : MonoBehaviour {
 	public Player currentPlayer;
 	public int currentPlayerCount;
 
-    public bool gameOver=false;
+    public bool gameOver = false;
 
 	public int maxAP = 5;
 	public int currentAP = 1;
 
 	public World world;
 
+	public float aiCooldown = 1;
+	float currentAICooldown;
+
+	public int maxAIMoves = 1000;
+
+	GameObject lastAIPlanet; 
+
 	void Start () {
 		world = GameObject.FindGameObjectWithTag ("World").GetComponent<World> ();
+		currentAICooldown = aiCooldown;
 		StartGame ();
 	}
 
     void Update() {
-        checkWin();
+		CheckButton ();
 
+		if(currentPlayer == allPlayers[1])
+			UpdateAI ();
+
+		if (currentPlayer == allPlayers [1] && currentPlayer.ap <= 0) {
+			StartNextTurn ();
+		}
+	}
+
+	private void CheckButton() {
 		if (currentPlayer == allPlayers [0] && currentPlayer.ap <= 0) {
 			GameObject.FindGameObjectWithTag("Ready").GetComponent<Button> ().interactable = true;
 		} else {
 			GameObject.FindGameObjectWithTag("Ready").GetComponent<Button> ().interactable = false;
 		}
 
-		if (currentPlayer == allPlayers [1] && currentPlayer.ap <= 0) {
-			StartNextTurn ();
-		}
 	}
 
 	public void StartGame(){
@@ -74,98 +88,52 @@ public class GameManager : MonoBehaviour {
 		} else {
 			currentPlayer = allPlayers [currentPlayerCount];
 		}
-
-        if(currentPlayer==allPlayers[1])
-        {
-            aiMove();
-        }
 	}
 
-    void aiMove()
-    {
-        GameObject referenz = null;
-        List<GameObject> friendlyPlanets = new List<GameObject>(); ;
-        int turnsNeeded = 0;
+	void UpdateAI(){
+		currentAICooldown -= Time.deltaTime;
+		if (currentAICooldown <= 0) {
+			currentAICooldown = aiCooldown;
+			if (currentPlayer.ap > 0) {
+				List<GameObject> nodes = currentPlayer.currentPlanet.GetComponent<Planet> ().nodes;
+					
+				bool hasNewPlanet = false;
+				foreach (GameObject planet in nodes) {
+					if (!hasNewPlanet && planet.GetComponent<Planet> ().ownedByPlayer == null) {
+						hasNewPlanet = true;
+						currentPlayer.SetCurrentPlanet (planet);
+					}
+				}
+				
+				if(!hasNewPlanet){
+					List<GameObject> ownedPlanets = new List<GameObject> ();
 
-        while (currentPlayer.ap > 0 && turnsNeeded < 1000)
-        {
-            //Loop ob Planet verfügbar ist
-            for (int i = 0; i < currentPlayer.currentPlanet.GetComponent<Planet>().nodes.Count; i++)
-            {
-                if (currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i].GetComponent<Planet>().ownedByPlayer == null)
-                {
-                    referenz = currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i]; break;
-                }
-                if (currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i].GetComponent<Planet>().ownedByPlayer == currentPlayer)
-                {
-                    friendlyPlanets.Add(currentPlayer.currentPlanet.GetComponent<Planet>().nodes[i]);
-                }
-            }
-            //Befreundeten Planeten finden und zufällig einen wählen
-            if (referenz == null)
-            {
-                int planet = Random.Range(0, friendlyPlanets.Count); 
-                referenz = friendlyPlanets[planet];
-                currentPlayer.AiSetCurrentPlanet(referenz);
-                friendlyPlanets.Clear();
-                turnsNeeded++;
-                if(turnsNeeded>=1000)
-                {
-                    Debug.Log(turnsNeeded);
-                    currentPlayer.ap--;
-                    turnsNeeded = 0;
-                }
-            }
-            //fremder Planet wurde gefunden
-            else 
-            {
-                currentPlayer.ap--;
-                currentPlayer.AiSetCurrentPlanet(referenz);
-            }
-        }
-        //Zug vorbei
-        StartNextTurn();
-    }
+					foreach (GameObject planet in nodes) {
+						if (planet.GetComponent<Planet> ().ownedByPlayer == currentPlayer && planet != lastAIPlanet) {
+							ownedPlanets.Add (planet);
+						}
+					}
 
+					int i = Random.Range (0, ownedPlanets.Count);
+					lastAIPlanet = currentPlayer.currentPlanet;
+					currentPlayer.SetCurrentPlanet (ownedPlanets [i]);
+				}
+			} else {
+				StartNextTurn ();
+			}
+		}
+	}
 
 	public void SelectPlanet(Player player, Planet planet){
 		if (player.ap > 0) {
-			if (planet.GetComponent<Planet> ().ownedByPlayer == player) {
-				player.ap++;
-			}
 			player.SetCurrentPlanet (planet.gameObject);
 		}
 	}
 
-    bool checkWin()
-    {
-        int playerPlanets = 0;
-        int aiPlanets = 0;
-        for(int i=0;i<world.planets.Count;i++)
-        {
-            if (world.planets[i].GetComponent<Planet>().ownedByPlayer == allPlayers[0])
-                playerPlanets++;
-            else if (world.planets[i].GetComponent<Planet>().ownedByPlayer == allPlayers[1])
-                aiPlanets++;
-        }
-
-        if (playerPlanets+aiPlanets == world.planets.Count)
-        {
-            gameOver = true;
-            if(playerPlanets>aiPlanets)
-            {
-                Debug.Log("Don Melone gewinnt der Kinderhandelskrieg mit " +playerPlanets+" Planeten!");
-            }
-            if(aiPlanets > playerPlanets)
-            {
-                Debug.Log("Du hattest " + playerPlanets + " Planeten! Die Regierung hat dich mit " + aiPlanets +" geschlagen!");
-            }
-            else
-            {
-                Debug.Log("Dafuq, Unentschieden?");
-            }
-            return true;
-        }
-        return false;
-    }
+	void OnDrawGizmos(){
+		if (currentPlayer != null) {
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere (currentPlayer.transform.position, 1);
+		}
+	}
 }
