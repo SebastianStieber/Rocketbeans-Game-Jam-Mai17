@@ -42,4 +42,11 @@ public class Player : MonoBehaviour {
 			gameManager.StartNextTurn ();
 		}
 	}
+
+    public void AiSetCurrentPlanet(GameObject planet)
+    {
+        currentPlanet = planet;
+        planet.GetComponent<Planet>().ownedByPlayer = this;
+        planet.GetComponent<MeshRenderer>().material = material;
+    }
 }
