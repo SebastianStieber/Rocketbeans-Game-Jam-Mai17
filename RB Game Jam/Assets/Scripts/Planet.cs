@@ -19,6 +19,8 @@ public class Planet : MonoBehaviour {
 
 	bool forward = true;
 
+	public bool hasSelector = false;
+
 	GameObject gameCam;
 
 	void Start () {
