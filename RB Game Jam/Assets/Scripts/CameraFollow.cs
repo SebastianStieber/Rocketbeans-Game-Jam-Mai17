@@ -28,7 +28,6 @@ public class CameraFollow : MonoBehaviour {
 
 	void Update () {
 		target = GetComponent<Player> ().currentPlanet;
-		if (oldTarget != target || target == null)
 		
 		Zoom ();
 		Move ();

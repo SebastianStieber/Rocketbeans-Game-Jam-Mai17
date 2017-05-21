@@ -9,6 +9,7 @@ public class CameraRotation : MonoBehaviour {
 	public bool isPressed;
 
     void Start() {
+		
 	}
 
     void  Update() {
@@ -26,7 +27,7 @@ public class CameraRotation : MonoBehaviour {
 
 		if (isPressed) {
 			Vector3 drag = Input.mousePosition - startDrag;
-			transform.rotation = transform.rotation * Quaternion.Euler (new Vector3(drag.y * Time.deltaTime / 2, drag.x * Time.deltaTime / 2, 0));
+			transform.rotation = transform.rotation * Quaternion.Euler (new Vector3(0, drag.x * Time.deltaTime / 2, 0));
 		}
 	}
 }

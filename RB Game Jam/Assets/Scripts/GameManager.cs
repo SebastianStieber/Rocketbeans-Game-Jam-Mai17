@@ -135,6 +135,7 @@ public class GameManager : MonoBehaviour {
 	public void SelectPlanet(Player player, Planet planet){
 		if (player.ap > 0) {
 			player.SetCurrentPlanet (planet.gameObject);
+			CheckWinState ();
 		}
 	}
 
@@ -143,5 +144,54 @@ public class GameManager : MonoBehaviour {
 			Gizmos.color = Color.red;
 			Gizmos.DrawWireSphere (currentPlayer.transform.position, 1);
 		}
+	}
+
+	void CheckWinState(){
+		List<GameObject> allPlanets = world.planets;
+		List<Planet> freePlanets = new List<Planet> ();
+		int c = 0;
+		foreach (GameObject planet in allPlanets){
+			if (planet.GetComponent<Planet> ().ownedByPlayer == null) {
+				freePlanets.Add (planet.GetComponent<Planet>());
+				c++;
+			}
+		}
+
+		if (c == 0) {
+			GameOver (true, true);
+			return;
+		}
+
+		bool pl = false;
+		bool ai = false;
+		foreach (Planet freePlanet in freePlanets){
+			foreach (GameObject p in freePlanet.nodes){
+				if(p.GetComponent<Planet>().ownedByPlayer == allPlayers[0])
+					pl = true;
+				if (p.GetComponent<Planet>().ownedByPlayer == allPlayers [1])
+					ai = true;
+			}
+		}
+
+		if (!pl || !ai)
+			GameOver (pl, ai);
+	}
+
+	void GameOver(bool pl, bool ai){
+		Debug.Log ("ai " + ai + " pl " + pl);
+
+		GameObject.FindGameObjectWithTag ("GameOverScreen").SetActive (true);
+
+		string text = "";
+
+		if (allPlayers [0].ownedPlanets.Count< allPlayers [1].ownedPlanets.Count) {
+			text = "Die KI gewinnnt";
+		} else {
+			text = "Du gewinnst";
+		}
+
+		text += "\n" + allPlayers [0].ownedPlanets.Count + "\ngegen\n" + allPlayers [1].ownedPlanets.Count;
+
+		GameObject.FindGameObjectWithTag ("GameOverText").GetComponent<Text> ().text = text;
 	}
 }
