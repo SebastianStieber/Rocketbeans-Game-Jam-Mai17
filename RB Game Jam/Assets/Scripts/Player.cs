@@ -40,8 +40,9 @@ public class Player : MonoBehaviour {
 	public void SetCurrentPlanet(GameObject planet){
 		currentPlanet = planet;
 		planet.GetComponent<Planet> ().ownedByPlayer = this;
+        gameManager.GetComponent<AudioScript>().setSound(planet, this);
 
-		ap--;
+        ap--;
 		if (ap <= 0)
 			ap = 0;
 
