@@ -19,15 +19,18 @@ public class Player : MonoBehaviour {
 
 	private World world;
 
+	public bool animateMovement;
+
 	void Start () {
 		gameManager = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager>();
 		world = GameObject.FindGameObjectWithTag ("World").GetComponent<World>();
 	}
 
 	void Update () {
-		if (transform.position != currentPlanet.transform.position) {
-			transform.position = Vector3.Lerp(transform.position, currentPlanet.transform.position, smooth * Time.deltaTime);
-		}
+		if (animateMovement && transform.position != currentPlanet.transform.position) {
+			transform.position = Vector3.Lerp (transform.position, currentPlanet.transform.position, smooth * Time.deltaTime);
+		} else
+			transform.position = currentPlanet.transform.position;
 	}
 
 	public void Reset(){
@@ -44,11 +47,4 @@ public class Player : MonoBehaviour {
 
 		world.GetComponent<Selector> ().UpdateSelectors ();
 	}
-
-    public void AiSetCurrentPlanet(GameObject planet)
-    {
-        currentPlanet = planet;
-		planet.GetComponent<Planet>().ownedByPlayer = this;
-		world.GetComponent<Selector> ().UpdateSelectors ();
-    }
 }
