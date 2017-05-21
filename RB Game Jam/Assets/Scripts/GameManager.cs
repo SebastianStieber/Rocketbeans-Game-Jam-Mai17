@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void CheckButton() {
-		if (currentPlayer == allPlayers [1]) {
+		if (currentPlayer == allPlayers [1] || (currentPlayerCount == 0 && currentPlayer.ap > 0)) {
 			GameObject.FindGameObjectWithTag ("Ready").GetComponent<Animator> ().SetBool ("IsActive", false);
 		} else {
 			GameObject.FindGameObjectWithTag ("Ready").GetComponent<Animator> ().SetBool ("IsActive", true);
