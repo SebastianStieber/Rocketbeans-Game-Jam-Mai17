@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -23,9 +24,16 @@ public class GameManager : MonoBehaviour {
 
     void Update() {
         checkWin();
-        if (currentPlayer.ap <= 0) {
-            StartNextTurn();
-        }
+
+		if (currentPlayer == allPlayers [0] && currentPlayer.ap <= 0) {
+			GameObject.FindGameObjectWithTag("Ready").GetComponent<Button> ().interactable = true;
+		} else {
+			GameObject.FindGameObjectWithTag("Ready").GetComponent<Button> ().interactable = false;
+		}
+
+		if (currentPlayer == allPlayers [1] && currentPlayer.ap <= 0) {
+			StartNextTurn ();
+		}
 	}
 
 	public void StartGame(){
@@ -40,6 +48,10 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void OnReadyButton(){
+		if(currentPlayer.ap <= 0)
+			StartNextTurn ();
+	}
 	public void StartNextRound() {
 		currentRound++;
 		currentPlayerCount = 0;
@@ -111,11 +123,12 @@ public class GameManager : MonoBehaviour {
 
 
 	public void SelectPlanet(Player player, Planet planet){
-        if(planet.GetComponent<Planet>().ownedByPlayer == player)
-        {
-            player.ap++;
-        }
-		player.SetCurrentPlanet (planet.gameObject);
+		if (player.ap > 0) {
+			if (planet.GetComponent<Planet> ().ownedByPlayer == player) {
+				player.ap++;
+			}
+			player.SetCurrentPlanet (planet.gameObject);
+		}
 	}
 
     bool checkWin()

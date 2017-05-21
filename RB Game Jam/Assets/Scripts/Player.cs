@@ -39,9 +39,8 @@ public class Player : MonoBehaviour {
 		planet.GetComponent<Planet> ().ownedByPlayer = this;
 
 		ap--;
-		if (ap == 0) {
-			gameManager.StartNextTurn ();
-		}
+		if (ap <= 0)
+			ap = 0;
 
 		world.GetComponent<Selector> ().UpdateSelectors ();
 	}
