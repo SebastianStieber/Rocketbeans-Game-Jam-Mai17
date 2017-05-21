@@ -19,10 +19,11 @@ public class GameManager : MonoBehaviour {
 		StartGame ();
 	}
 
-	void Update () {
-		if (Input.GetKeyDown (KeyCode.F)) {
-			StartNextTurn ();
-		}
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.F)) {
+            StartNextTurn();
+        }
+        Debug.Log(allPlayers[1].currentPlanet.name);
 	}
 
 	public void StartGame(){
