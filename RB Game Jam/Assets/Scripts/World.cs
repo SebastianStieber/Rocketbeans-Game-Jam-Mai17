@@ -12,13 +12,19 @@ public class World : MonoBehaviour {
 
 	public List<GameObject> planets = new List<GameObject>();
 
-	public GameObject planetPrefab;
+	public GameObject planetPrefab1;
+	public GameObject planetPrefab2;
+	public GameObject planetPrefab3;
 	public GameObject streetPrefab;
 
 	void OnEnable () {
 		GeneratePlanets ();
 		ApplyRandomness ();
 		BuildStreets ();
+
+		foreach (GameObject go in planets)
+			if (go.transform.position == Vector3.zero)
+				Destroy (go);
 	}
 
 	void Update () {
@@ -33,7 +39,16 @@ public class World : MonoBehaviour {
 	GameObject GeneratePlanet(){
 		Vector3 position = CalculatePosition ();
 
-		GameObject planet = Instantiate (planetPrefab);
+		int r = Random.Range (0, 2);
+
+		GameObject planet;
+		if (r == 0)
+			planet = Instantiate (planetPrefab1);
+		if (r == 1)
+			planet = Instantiate (planetPrefab2);
+		else
+			planet = Instantiate (planetPrefab3);
+
 		planet.GetComponent<Planet> ().SetCoordinates (position);
 
 		planets.Add (planet);

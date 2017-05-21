@@ -23,7 +23,6 @@ public class Player : MonoBehaviour {
 
 	void Update () {
 		if (transform.position != currentPlanet.transform.position) {
-			Debug.Log (33);
 			transform.position = Vector3.Lerp(transform.position, currentPlanet.transform.position, smooth * Time.deltaTime);
 		}
 	}
@@ -35,7 +34,6 @@ public class Player : MonoBehaviour {
 	public void SetCurrentPlanet(GameObject planet){
 		currentPlanet = planet;
 		planet.GetComponent<Planet> ().ownedByPlayer = this;
-		planet.GetComponent<MeshRenderer> ().material = material;
 
 		ap--;
 		if (ap == 0) {
