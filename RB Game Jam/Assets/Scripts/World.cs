@@ -115,7 +115,10 @@ public class World : MonoBehaviour {
 		foreach (GameObject p2 in planets) {
 			if (p2 != planet && Vector3.Distance (planet.GetComponent<Planet> ().coordinates, p2.GetComponent<Planet> ().coordinates) <= distanceBetweenPlanets * streetDistanceMultiplier) {
 				GameObject street = Instantiate (streetPrefab);
-				street.GetComponent<LineRenderer> ().SetPositions (new Vector3 [] {planet.transform.position, p2.transform.position});
+				Vector3 dir = p2.transform.position - planet.transform.position;
+				dir.Normalize ();
+				float factor = 5;
+				street.GetComponent<LineRenderer> ().SetPositions (new Vector3 [] {planet.transform.position + dir * factor, p2.transform.position - dir * factor});
 				planet.GetComponent<Planet> ().nodes.Add (p2);
 				c++;
 			}

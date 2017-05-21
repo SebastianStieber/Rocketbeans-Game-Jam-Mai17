@@ -17,8 +17,11 @@ public class Player : MonoBehaviour {
 
 	public Material material;
 
+	private World world;
+
 	void Start () {
 		gameManager = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager>();
+		world = GameObject.FindGameObjectWithTag ("World").GetComponent<World>();
 	}
 
 	void Update () {
@@ -39,12 +42,14 @@ public class Player : MonoBehaviour {
 		if (ap == 0) {
 			gameManager.StartNextTurn ();
 		}
+
+		world.GetComponent<Selector> ().UpdateSelectors ();
 	}
 
     public void AiSetCurrentPlanet(GameObject planet)
     {
         currentPlanet = planet;
-        planet.GetComponent<Planet>().ownedByPlayer = this;
-        planet.GetComponent<MeshRenderer>().material = material;
+		planet.GetComponent<Planet>().ownedByPlayer = this;
+		world.GetComponent<Selector> ().UpdateSelectors ();
     }
 }
